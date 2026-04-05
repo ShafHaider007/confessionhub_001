@@ -43,7 +43,7 @@ Use this checklist so suggestions and edits stay consistent with this repo and t
 | Pages / UI | `src/app/` |
 | API        | `src/app/api/` |
 | Dashboard shell | `src/app/dashboard/layout.tsx` (Server Component); interactive chrome in `DashboardHeader.tsx` (`"use client"`) to avoid shell hydration mismatches |
-| Map UI     | `src/components/map/` (MapLibre basemap); signed-in **`/dashboard/map`** |
+| Map UI     | `src/components/map/` (MapLibre basemap + Deck.gl overlay); **`MapImportToolbar.tsx`** — compact **Import** control (collapsed pill / mobile bottom sheet, desktop card); first category **Vectors & PMTiles** (GeoJSON / shapefile ZIP ≤ **15 MB** via `parseVectorImportFile.ts`, `.pmtiles` ≤ **500 MB** via `PMTilesMVTLayer`); raw files **over 15 MB** → `LargeFileGuidancePanel.tsx`; signed-in **`/dashboard/map`** |
 | Mongoose   | `src/model/User.ts` |
 | Zod        | `src/schemas/` |
 | DB helper  | `src/lib/dbConnect.ts` |
