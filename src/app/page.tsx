@@ -11,10 +11,12 @@ export default async function Home() {
         <div className="flex min-h-full flex-1 flex-col items-center justify-center bg-zinc-50 px-4 py-16 dark:bg-zinc-950">
             <main className="w-full max-w-lg text-center">
                 <p className="text-sm font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
-                    ConfessionHub
+                    SpatialX
                 </p>
                 <h1 className="mt-2 text-3xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
-                    {user ? "Welcome back" : "Share confessions privately"}
+                    {user
+                        ? "Welcome back"
+                        : "Geospatial maps and Sentinel-powered imagery"}
                 </h1>
 
                 {user ? (

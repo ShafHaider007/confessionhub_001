@@ -5,7 +5,7 @@ import { resend } from "../resend";
 /**
  * Env:
  * - RESEND_API_KEY (required)
- * - RESEND_FROM (optional) — e.g. `ConfessionHub <onboarding@resend.dev>` or `Name <noreply@your-verified-domain.com>`
+ * - RESEND_FROM (optional) — e.g. `SpatialX <onboarding@resend.dev>` or `Name <noreply@your-verified-domain.com>`
  *
  * Without a verified domain, use Resend’s test sender: onboarding@resend.dev (see RESEND_FROM default below).
  */
@@ -24,13 +24,13 @@ export async function sendVerificationEmail(
 
     const from =
         process.env.RESEND_FROM?.trim() ||
-        "ConfessionHub <onboarding@resend.dev>";
+        "SpatialX <onboarding@resend.dev>";
 
     try {
         const { data, error } = await resend.emails.send({
             from,
             to: email,
-            subject: "Verification code — ConfessionHub",
+            subject: "Verification code — SpatialX",
             react: VerificationEmail({ code: verifyCode, username }),
         });
 

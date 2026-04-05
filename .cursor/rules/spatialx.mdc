@@ -1,9 +1,9 @@
 ---
-description: ConfessionHub — Next.js 16, MongoDB, Zod; follow AGENTS.md
+description: SpatialX — Next.js 16 geospatial stack, MongoDB, Zod; follow AGENTS.md
 alwaysApply: true
 ---
 
-# ConfessionHub
+# SpatialX
 
 Full detail lives in **`AGENTS.md`** at the repo root. Follow this in every change:
 
@@ -19,6 +19,7 @@ This is **Next.js 16** with breaking differences from older docs. Before writing
 - **Validation:** Use Zod in **`src/schemas/`** and keep fields aligned with **`src/model/User.ts`**.
 - **JSON shape:** Reuse **`src/types/`** (e.g. API response types) for routes and callers.
 - **Email:** **`src/lib/resend.ts`**, **`src/lib/helpers/sendVerificationEmail.ts`**, templates under **`emails/`**.
+- **Geospatial / imagery:** Prefer **`@sentinel-hub/sentinelhub-js`** and server-side API routes for credentials; never expose raw API keys to the client.
 - **Scope:** Match nearby files’ naming and style; avoid unrelated refactors.
 
 After touching routes, imports, or types, run **`npm run lint`** and **`npm run build`** when practical.

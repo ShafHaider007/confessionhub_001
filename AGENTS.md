@@ -6,6 +6,12 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 ---
 
+## Project: SpatialX
+
+Full-stack **geospatial** app (Sentinel Hub JS on the server, MongoDB, Next.js 16). Branding and Cursor rules: **`.cursor/rules/spatialx.mdc`**.
+
+---
+
 ## Autocomplete / agent steps (follow in order)
 
 Use this checklist so suggestions and edits stay consistent with this repo and the installed Next.js version.

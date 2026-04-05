@@ -1,10 +1,10 @@
 <div align="center">
 
-# ConfessionHub
+# SpatialX
 
-**Receive anonymous messages on your terms.**
+**Full-stack geospatial workflows — maps, Sentinel Hub imagery, and signed-in dashboards.**
 
-A full-stack web app for sharing a link, collecting confessions or feedback, and staying in control with verification and an on/off switch for new messages.
+SpatialX is a Next.js app for exploring and building on Earth observation data, with accounts, email verification, and a MongoDB-backed user model you can extend for saved views, layers, and projects.
 
 [![Next.js](https://img.shields.io/badge/Next.js-16-000000?style=flat-square&logo=next.js&logoColor=white)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev/)
@@ -17,48 +17,37 @@ A full-stack web app for sharing a link, collecting confessions or feedback, and
 
 ---
 
-## Why ConfessionHub?
+## What’s in the box
 
-Whether you call them confessions, anonymous notes, or honest feedback, people want a simple way to reach you without exposing their identity. ConfessionHub is built around that idea: **one profile, one inbox, full control** over who can still write to you.
-
----
-
-## Features (domain model)
-
-| Capability | Details |
-|------------|---------|
-| **Accounts** | Username, email, and password with strong validation (length, complexity, uniqueness). |
-| **Verification** | Email-style flow with a verify code and expiry (`verifySchema` / `verifyCodeExpiresAt`). |
-| **Inbox** | Messages stored as embedded documents with content and timestamp. |
-| **Privacy toggle** | `isAcceptingMessages` lets you pause new submissions without deleting history. |
-| **Input safety** | Zod schemas cap message length (5–300 chars) and normalize sign-up rules in one place. |
+| Area | Details |
+|------|---------|
+| **Geospatial** | [`@sentinel-hub/sentinelhub-js`](https://www.npmjs.com/package/@sentinel-hub/sentinelhub-js) for Sentinel Hub–style imagery and processing helpers (use **server routes** for secrets). |
+| **Accounts** | Sign up, sign in (NextAuth), email verification via Resend. |
+| **User model** | Mongoose `User` with optional embedded messages (legacy inbox fields you can repurpose or remove as the product evolves). |
+| **Validation** | Zod schemas aligned with the user model for API and forms. |
 
 ---
 
 ## Tech stack
 
-- **[Next.js 16](https://nextjs.org/)** — App Router, React Server Components–ready layout.
-- **[React 19](https://react.dev/)** — UI with the React Compiler plugin enabled in dev tooling.
-- **[MongoDB + Mongoose](https://mongoosejs.com/)** — `User` model with nested `Message` subdocuments.
-- **[Zod](https://zod.dev/)** — Shared validation for sign-up, sign-in, verify, messages, and accept-message settings.
-- **[Tailwind CSS v4](https://tailwindcss.com/)** — Utility-first styling with PostCSS integration.
+- **[Next.js 16](https://nextjs.org/)** — App Router, Server Components by default.
+- **[React 19](https://react.dev/)** — UI with the React Compiler plugin in dev tooling.
+- **[MongoDB + Mongoose](https://mongoosejs.com/)** — `User` model and related data.
+- **[Zod](https://zod.dev/)** — Shared validation for auth, verify, and messages.
+- **[Tailwind CSS v4](https://tailwindcss.com/)** — Styling via PostCSS.
 
 ---
 
 ## Project layout
 
 ```
-confessionhub/
+spatialx/                    # rename the folder locally if it still says confessionhub
 ├── src/
-│   ├── app/                 # Next.js App Router (pages, layout, global styles)
+│   ├── app/                 # App Router (pages, API routes, layout)
 │   ├── model/
-│   │   └── User.ts          # Mongoose User + Message schemas
-│   └── schemas/             # Zod validators (API / form contracts)
-│       ├── acceptMessageSchema.ts
-│       ├── messageSchema.ts
-│       ├── signInSchema.ts
-│       ├── signUpSchema.ts
-│       └── verifySchema.ts
+│   │   └── User.ts
+│   └── schemas/             # Zod validators
+├── emails/                  # React Email templates
 ├── public/
 ├── next.config.ts
 ├── package.json
@@ -71,8 +60,8 @@ confessionhub/
 
 ### Prerequisites
 
-- **Node.js** 20+ (matches `@types/node` in the project)
-- **MongoDB** — local instance or [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
+- **Node.js** 20+
+- **MongoDB** — local or [Atlas](https://www.mongodb.com/cloud/atlas)
 
 ### Install
 
@@ -82,14 +71,14 @@ npm install
 
 ### Environment
 
-Create a `.env.local` in the project root (values depend on how you connect Mongoose):
+Create `.env.local` in the project root (never commit real secrets). Typical variables:
 
 ```env
-MONGODB_URI=mongodb://localhost:27017/confessionhub
-# Add other secrets (e.g. auth, email) as you wire routes and services.
+MONGODB_URI=mongodb://localhost:27017/spatialx
+# NextAuth, Resend, Sentinel Hub / OAuth client secrets as you wire them
 ```
 
-> **Note:** Wire `MONGODB_URI` (or your chosen variable name) in your database connection module when you add API routes or server actions.
+Keep Sentinel Hub (or Copernicus) credentials on the **server** only; proxy through `src/app/api/...` routes.
 
 ### Run locally
 
@@ -99,32 +88,31 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-### Other scripts
+### Scripts
 
 | Command | Purpose |
 |---------|---------|
-| `npm run dev` | Development server with hot reload |
+| `npm run dev` | Development server |
 | `npm run build` | Production build |
-| `npm run start` | Start production server |
-| `npm run lint` | ESLint (Next.js config) |
+| `npm run start` | Production server |
+| `npm run lint` | ESLint |
 
 ---
 
-## Design notes
+## Agent / contributor notes
 
-- Validation rules in `src/schemas/` mirror constraints on the Mongoose `User` model so API and UI can stay aligned.
-- The `User` model uses the standard Next.js + Mongoose pattern: reuse `mongoose.models.User` in dev to avoid **OverwriteModelError**.
+Project conventions for AI assistants and humans live in **`AGENTS.md`** and **`.cursor/rules/spatialx.mdc`**.
 
 ---
 
 ## License
 
-This project is **private** (`"private": true` in `package.json`). Adjust licensing if you open-source it.
+This project is **private** (`"private": true` in `package.json`). Adjust if you open-source it.
 
 ---
 
 <div align="center">
 
-Built with Next.js · Ready to grow into routes, auth, and a polished inbox UI.
+SpatialX · Next.js · Sentinel Hub–ready backend patterns
 
 </div>
