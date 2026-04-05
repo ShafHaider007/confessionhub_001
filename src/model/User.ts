@@ -20,6 +20,7 @@ export interface User extends Document {
     email: string;
     verifyCode: string;
     verifyCodeExpiresAt: Date;
+    isVerified: boolean;
     isAcceptingMessages: boolean;
     messages: Message[];
 
@@ -33,6 +34,7 @@ const userSchema: Schema<User> = new Schema({
     email: { type: String, required: true, unique: true , match: [/^\S+@\S+\.\S+$/, "Please enter a valid email address"]},
     verifyCodeExpiresAt: { type: Date, required: [true, "Verify code expiry at is required"] },
     verifyCode: { type: String, required: [true, "Verify code is required"] },
+    isVerified: { type: Boolean, default: false },
     isAcceptingMessages: { type: Boolean, default: true },
     messages: { type: [messageSchema], default: [] },
 

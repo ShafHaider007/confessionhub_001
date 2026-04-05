@@ -1,0 +1,24 @@
+---
+description: ConfessionHub — Next.js 16, MongoDB, Zod; follow AGENTS.md
+alwaysApply: true
+---
+
+# ConfessionHub
+
+Full detail lives in **`AGENTS.md`** at the repo root. Follow this in every change:
+
+## Next.js (this repo’s version)
+
+This is **Next.js 16** with breaking differences from older docs. Before writing App Router code, check the matching topic under **`node_modules/next/dist/docs/`** instead of relying on outdated patterns.
+
+## Defaults
+
+- Prefer **Server Components**. Use **`"use client"`** only when you need hooks, browser APIs, or DOM event handlers.
+- **API:** `src/app/api/<path>/route.ts` — export `GET` / `POST` / etc.; return `Response` or `NextResponse` per current docs.
+- **DB:** Import and await the default export from **`src/lib/dbConnect.ts`** before Mongoose. Use **`process.env.MONGODB_URI`** on the server only. Never commit or paste **`.env`** contents.
+- **Validation:** Use Zod in **`src/schemas/`** and keep fields aligned with **`src/model/User.ts`**.
+- **JSON shape:** Reuse **`src/types/`** (e.g. API response types) for routes and callers.
+- **Email:** **`src/lib/resend.ts`**, **`src/lib/helpers/sendVerificationEmail.ts`**, templates under **`emails/`**.
+- **Scope:** Match nearby files’ naming and style; avoid unrelated refactors.
+
+After touching routes, imports, or types, run **`npm run lint`** and **`npm run build`** when practical.
