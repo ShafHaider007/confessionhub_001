@@ -127,7 +127,7 @@ function VerifyEmailForm() {
 
     if (status === "loading" || status === "authenticated") {
         return (
-            <div className="flex min-h-[200px] items-center justify-center text-sm text-zinc-500 dark:text-zinc-400">
+            <div className="flex min-h-[200px] items-center justify-center text-base font-light text-[var(--spatialx-text-muted)]">
                 {status === "loading" ? "Loading…" : "Redirecting…"}
             </div>
         );
@@ -137,11 +137,13 @@ function VerifyEmailForm() {
 
     return (
         <div className="flex flex-col gap-8">
-            <p className="rounded-lg bg-zinc-100 px-3 py-2 text-xs text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
+            <p className="rounded-[12px] border-[0.5px] border-[var(--spatialx-border)] bg-[var(--spatialx-bg-muted)] px-3 py-2.5 text-base font-light text-[var(--spatialx-text)]">
                 Codes expire after{" "}
-                <strong>{VERIFICATION_CODE_TTL_MINUTES} minutes</strong> for
-                security. If yours expired, use &quot;Email me a new code&quot;
-                (same email) — subject to rate limits.
+                <span className="font-medium">
+                    {VERIFICATION_CODE_TTL_MINUTES} minutes
+                </span>{" "}
+                for security. If yours expired, use &quot;Email me a new
+                code&quot; (same email) — subject to rate limits.
             </p>
 
             <form
@@ -152,7 +154,7 @@ function VerifyEmailForm() {
                 <div className="flex flex-col gap-1.5">
                     <label
                         htmlFor="verify-email"
-                        className="text-sm font-medium text-zinc-900 dark:text-zinc-100"
+                        className="text-base font-medium text-[var(--spatialx-text)]"
                     >
                         Email
                     </label>
@@ -163,13 +165,13 @@ function VerifyEmailForm() {
                         autoComplete="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-zinc-900 outline-none ring-zinc-400 transition focus:border-zinc-500 focus:ring-2 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:focus:border-zinc-500"
+                        className="rounded-[12px] border-[0.5px] border-[var(--spatialx-border)] bg-[var(--spatialx-bg-muted)] px-3 py-3 text-base text-[var(--spatialx-text)] outline-none ring-[var(--spatialx-green)]/25 transition focus:border-[var(--spatialx-green)] focus:ring-2"
                         disabled={submitting}
                         required
                     />
                     {fieldErrors.email ? (
                         <p
-                            className="text-sm text-red-600 dark:text-red-400"
+                            className="text-base text-red-600"
                             role="alert"
                         >
                             {fieldErrors.email}
@@ -180,7 +182,7 @@ function VerifyEmailForm() {
                 <div className="flex flex-col gap-1.5">
                     <label
                         htmlFor="verify-code"
-                        className="text-sm font-medium text-zinc-900 dark:text-zinc-100"
+                        className="text-base font-medium text-[var(--spatialx-text)]"
                     >
                         Verification code
                     </label>
@@ -191,17 +193,17 @@ function VerifyEmailForm() {
                         placeholder="Paste the code from your email"
                         value={code}
                         onChange={(e) => setCode(e.target.value)}
-                        className="resize-y rounded-lg border border-zinc-300 bg-white px-3 py-2.5 font-mono text-sm text-zinc-900 outline-none ring-zinc-400 transition focus:border-zinc-500 focus:ring-2 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:focus:border-zinc-500"
+                        className="resize-y rounded-[12px] border-[0.5px] border-[var(--spatialx-border)] bg-[var(--spatialx-bg-muted)] px-3 py-3 font-mono text-base text-[var(--spatialx-text)] outline-none ring-[var(--spatialx-green)]/25 transition focus:border-[var(--spatialx-green)] focus:ring-2"
                         disabled={submitting}
                         required
                         spellCheck={false}
                     />
-                    <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                    <p className="text-base font-light text-[var(--spatialx-text-muted)]">
                         Paste the full code (64 characters). Spaces are ignored.
                     </p>
                     {fieldErrors.code ? (
                         <p
-                            className="text-sm text-red-600 dark:text-red-400"
+                            className="text-base text-red-600"
                             role="alert"
                         >
                             {fieldErrors.code}
@@ -211,7 +213,7 @@ function VerifyEmailForm() {
 
                 {formError ? (
                     <p
-                        className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/40 dark:text-red-300"
+                        className="rounded-[12px] border-[0.5px] border-red-200 bg-red-50 px-3 py-2.5 text-base text-red-800"
                         role="alert"
                     >
                         {formError}
@@ -221,27 +223,28 @@ function VerifyEmailForm() {
                 <button
                     type="submit"
                     disabled={submitting}
-                    className="flex h-11 items-center justify-center rounded-lg bg-zinc-900 text-sm font-medium text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+                    className="flex h-12 items-center justify-center rounded-[100px] bg-zinc-900 text-base font-medium text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                     {submitting ? "Verifying…" : "Verify email"}
                 </button>
             </form>
 
             <div
-                className={`rounded-xl border border-dashed border-zinc-300 p-4 dark:border-zinc-600 ${showExpiredHint ? "bg-amber-50 dark:bg-amber-950/20" : ""}`}
+                className={`rounded-[12px] border-[0.5px] border-dashed border-[var(--spatialx-border)] p-4 ${showExpiredHint ? "bg-amber-50" : ""}`}
             >
-                <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                <h2 className="text-base font-medium text-[var(--spatialx-text)]">
                     Code expired or no email?
                 </h2>
-                <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-400">
+                <p className="mt-1 text-base font-light text-[var(--spatialx-text-muted)]">
                     We will only email addresses that have an{" "}
-                    <strong>unverified</strong> account. Max{" "}
-                    <strong>5 emails per 24 hours</strong> and at least{" "}
-                    <strong>60 seconds</strong> between sends.
+                    <span className="font-medium">unverified</span> account. Max{" "}
+                    <span className="font-medium">5 emails per 24 hours</span>{" "}
+                    and at least <span className="font-medium">60 seconds</span>{" "}
+                    between sends.
                 </p>
                 {resendInfo ? (
                     <p
-                        className="mt-2 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-200"
+                        className="mt-2 rounded-[12px] border-[0.5px] border-[var(--spatialx-green)]/25 bg-[var(--spatialx-green-fill)] px-3 py-2.5 text-base font-normal text-[var(--spatialx-green-ink)]"
                         role="status"
                     >
                         {resendInfo}
@@ -249,7 +252,7 @@ function VerifyEmailForm() {
                 ) : null}
                 {resendError ? (
                     <p
-                        className="mt-2 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/40 dark:text-red-300"
+                        className="mt-2 rounded-[12px] border-[0.5px] border-red-200 bg-red-50 px-3 py-2.5 text-base text-red-800"
                         role="alert"
                     >
                         {resendError}
@@ -259,7 +262,7 @@ function VerifyEmailForm() {
                     type="button"
                     disabled={resendSubmitting}
                     onClick={handleResend}
-                    className="mt-3 flex h-10 w-full items-center justify-center rounded-lg border border-zinc-300 bg-white text-sm font-medium text-zinc-900 transition hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-60 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700 sm:w-auto sm:px-4"
+                    className="mt-3 flex h-11 w-full items-center justify-center rounded-[100px] border-[0.5px] border-[var(--spatialx-border)] bg-[var(--spatialx-bg)] text-base font-medium text-[var(--spatialx-text)] transition hover:bg-[var(--spatialx-bg-muted)] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto sm:px-4"
                 >
                     {resendSubmitting ? "Sending…" : "Email me a new code"}
                 </button>
@@ -270,7 +273,7 @@ function VerifyEmailForm() {
 
 function VerifyEmailFallback() {
     return (
-        <div className="flex min-h-[200px] items-center justify-center text-sm text-zinc-500 dark:text-zinc-400">
+        <div className="flex min-h-[200px] items-center justify-center text-base font-light text-[var(--spatialx-text-muted)]">
             Loading…
         </div>
     );
@@ -278,13 +281,13 @@ function VerifyEmailFallback() {
 
 export default function VerifyEmailPage() {
     return (
-        <div className="flex min-h-full flex-1 flex-col items-center justify-center bg-zinc-50 px-4 py-16 dark:bg-zinc-950">
-            <div className="w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="flex min-h-full flex-1 flex-col items-center justify-center bg-[var(--spatialx-bg)] px-4 py-16">
+            <div className="w-full max-w-md rounded-[12px] border-[0.5px] border-[var(--spatialx-border)] bg-[var(--spatialx-surface)] p-8">
                 <div className="mb-8 text-center">
-                    <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
+                    <h1 className="font-display text-3xl font-normal tracking-tight text-[var(--spatialx-text)]">
                         Verify your email
                     </h1>
-                    <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+                    <p className="mt-2 text-base font-light text-[var(--spatialx-text-muted)]">
                         Enter the code from your latest email, then sign in.
                     </p>
                 </div>
@@ -293,18 +296,18 @@ export default function VerifyEmailPage() {
                     <VerifyEmailForm />
                 </Suspense>
 
-                <p className="mt-8 text-center text-sm text-zinc-600 dark:text-zinc-400">
+                <p className="mt-8 text-center text-base font-light text-[var(--spatialx-text-muted)]">
                     Wrong email or need an account?{" "}
                     <Link
                         href="/sign-up"
-                        className="font-medium text-zinc-900 underline-offset-4 hover:underline dark:text-zinc-100"
+                        className="font-medium text-[var(--spatialx-green)] underline-offset-4 hover:underline"
                     >
                         Sign up
                     </Link>
                     {" · "}
                     <Link
                         href="/sign-in"
-                        className="font-medium text-zinc-900 underline-offset-4 hover:underline dark:text-zinc-100"
+                        className="font-medium text-[var(--spatialx-green)] underline-offset-4 hover:underline"
                     >
                         Sign in
                     </Link>

@@ -7,11 +7,14 @@ import { Suspense, useEffect, useLayoutEffect, useState } from "react";
 
 import { signInSchema } from "@/schemas/signInSchema";
 
+/** Where users land after a successful sign-in when no `callbackUrl` is provided. */
+const DEFAULT_SIGNED_IN_PATH = "/dashboard";
+
 /**
  * NextAuth / middleware sometimes pass a full same-origin URL. App Router needs a path.
  */
 function safeCallbackUrl(raw: string | null): string {
-    if (!raw?.trim()) return "/";
+    if (!raw?.trim()) return DEFAULT_SIGNED_IN_PATH;
     const v = raw.trim();
 
     if (v.startsWith("/") && !v.startsWith("//")) {
@@ -28,17 +31,17 @@ function safeCallbackUrl(raw: string | null): string {
                   : null;
         if (expectedOrigin && u.origin === expectedOrigin) {
             const path = `${u.pathname}${u.search}`;
-            return path && path !== "" ? path : "/";
+            return path && path !== "" ? path : DEFAULT_SIGNED_IN_PATH;
         }
     } catch {
         /* ignore */
     }
 
-    return "/";
+    return DEFAULT_SIGNED_IN_PATH;
 }
 
 function navigateToCallback(callbackUrl: string) {
-    const path = callbackUrl.startsWith("/") ? callbackUrl : "/";
+    const path = callbackUrl.startsWith("/") ? callbackUrl : DEFAULT_SIGNED_IN_PATH;
     window.location.assign(`${window.location.origin}${path}`);
 }
 
@@ -112,7 +115,7 @@ function SignInForm() {
 
     if (status === "loading" || status === "authenticated") {
         return (
-            <div className="flex min-h-[200px] items-center justify-center text-sm text-zinc-500 dark:text-zinc-400">
+            <div className="flex min-h-[200px] items-center justify-center text-base font-light text-[var(--spatialx-text-muted)]">
                 {status === "loading" ? "Loading…" : "Redirecting…"}
             </div>
         );
@@ -126,7 +129,7 @@ function SignInForm() {
         >
             {justVerified ? (
                 <p
-                    className="rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-200"
+                    className="rounded-[12px] border-[0.5px] border-[var(--spatialx-green)]/25 bg-[var(--spatialx-green-fill)] px-3 py-2.5 text-base font-normal text-[var(--spatialx-green-ink)]"
                     role="status"
                 >
                     Email verified. Sign in with your password to continue.
@@ -135,7 +138,7 @@ function SignInForm() {
             <div className="flex flex-col gap-1.5">
                 <label
                     htmlFor="sign-in-email"
-                    className="text-sm font-medium text-zinc-900 dark:text-zinc-100"
+                    className="text-base font-medium text-[var(--spatialx-text)]"
                 >
                     Email
                 </label>
@@ -146,7 +149,7 @@ function SignInForm() {
                     autoComplete="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-zinc-900 outline-none ring-zinc-400 transition focus:border-zinc-500 focus:ring-2 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:focus:border-zinc-500"
+                    className="rounded-[12px] border-[0.5px] border-[var(--spatialx-border)] bg-[var(--spatialx-bg-muted)] px-3 py-3 text-base text-[var(--spatialx-text)] outline-none ring-[var(--spatialx-green)]/25 transition focus:border-[var(--spatialx-green)] focus:ring-2"
                     disabled={submitting}
                     aria-invalid={!!fieldErrors.email}
                     aria-describedby={
@@ -156,7 +159,7 @@ function SignInForm() {
                 {fieldErrors.email ? (
                     <p
                         id="sign-in-email-error"
-                        className="text-sm text-red-600 dark:text-red-400"
+                        className="text-base text-red-600"
                         role="alert"
                     >
                         {fieldErrors.email}
@@ -167,7 +170,7 @@ function SignInForm() {
             <div className="flex flex-col gap-1.5">
                 <label
                     htmlFor="sign-in-password"
-                    className="text-sm font-medium text-zinc-900 dark:text-zinc-100"
+                    className="text-base font-medium text-[var(--spatialx-text)]"
                 >
                     Password
                 </label>
@@ -178,7 +181,7 @@ function SignInForm() {
                     autoComplete="current-password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-zinc-900 outline-none ring-zinc-400 transition focus:border-zinc-500 focus:ring-2 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:focus:border-zinc-500"
+                    className="rounded-[12px] border-[0.5px] border-[var(--spatialx-border)] bg-[var(--spatialx-bg-muted)] px-3 py-3 text-base text-[var(--spatialx-text)] outline-none ring-[var(--spatialx-green)]/25 transition focus:border-[var(--spatialx-green)] focus:ring-2"
                     disabled={submitting}
                     aria-invalid={!!fieldErrors.password}
                     aria-describedby={
@@ -188,7 +191,7 @@ function SignInForm() {
                 {fieldErrors.password ? (
                     <p
                         id="sign-in-password-error"
-                        className="text-sm text-red-600 dark:text-red-400"
+                        className="text-base text-red-600"
                         role="alert"
                     >
                         {fieldErrors.password}
@@ -198,7 +201,7 @@ function SignInForm() {
 
             {formError ? (
                 <p
-                    className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/40 dark:text-red-300"
+                    className="rounded-[12px] border-[0.5px] border-red-200 bg-red-50 px-3 py-2.5 text-base text-red-800"
                     role="alert"
                 >
                     {formError}
@@ -208,7 +211,7 @@ function SignInForm() {
             <button
                 type="submit"
                 disabled={submitting}
-                className="flex h-11 items-center justify-center rounded-lg bg-zinc-900 text-sm font-medium text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+                className="flex h-12 items-center justify-center rounded-[100px] bg-zinc-900 text-base font-medium text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-60"
             >
                 {submitting ? "Signing in…" : "Sign in"}
             </button>
@@ -218,7 +221,7 @@ function SignInForm() {
 
 function SignInFallback() {
     return (
-        <div className="flex min-h-[200px] items-center justify-center text-sm text-zinc-500 dark:text-zinc-400">
+        <div className="flex min-h-[200px] items-center justify-center text-base font-light text-[var(--spatialx-text-muted)]">
             Loading…
         </div>
     );
@@ -226,13 +229,13 @@ function SignInFallback() {
 
 export default function SignInPage() {
     return (
-        <div className="flex min-h-full flex-1 flex-col items-center justify-center bg-zinc-50 px-4 py-16 dark:bg-zinc-950">
-            <div className="w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="flex min-h-full flex-1 flex-col items-center justify-center bg-[var(--spatialx-bg)] px-4 py-16">
+            <div className="w-full max-w-md rounded-[12px] border-[0.5px] border-[var(--spatialx-border)] bg-[var(--spatialx-surface)] p-8">
                 <div className="mb-8 text-center">
-                    <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
+                    <h1 className="font-display text-3xl font-normal tracking-tight text-[var(--spatialx-text)]">
                         Sign in
                     </h1>
-                    <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+                    <p className="mt-2 text-base font-light text-[var(--spatialx-text-muted)]">
                         Use the email and password for your account.
                     </p>
                 </div>
@@ -241,11 +244,11 @@ export default function SignInPage() {
                     <SignInForm />
                 </Suspense>
 
-                <p className="mt-8 text-center text-sm text-zinc-600 dark:text-zinc-400">
+                <p className="mt-8 text-center text-base font-light text-[var(--spatialx-text-muted)]">
                     Don&apos;t have an account?{" "}
                     <Link
                         href="/sign-up"
-                        className="font-medium text-zinc-900 underline-offset-4 hover:underline dark:text-zinc-100"
+                        className="font-medium text-[var(--spatialx-green)] underline-offset-4 hover:underline"
                     >
                         Sign up
                     </Link>

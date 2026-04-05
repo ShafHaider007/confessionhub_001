@@ -1,49 +1,90 @@
 "use client";
 
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
+
+const placeholders = [
+    {
+        title: "Areas of interest",
+        body: "Define regions and revisit them anytime—no map on this screen yet, just your workspace.",
+    },
+    {
+        title: "Analysis runs",
+        body: "When flows are wired up, summaries and exports for each run will land here.",
+    },
+    {
+        title: "Team",
+        body: "Invite collaborators and keep everyone on the same spatial context.",
+    },
+] as const;
 
 export default function DashboardPage() {
     const { data: session, status } = useSession();
 
     if (status === "loading") {
         return (
-            <div className="flex min-h-full flex-1 items-center justify-center bg-zinc-50 dark:bg-zinc-950">
-                <p className="text-sm text-zinc-500 dark:text-zinc-400">
+            <div className="flex min-h-[40vh] flex-1 items-center justify-center">
+                <p className="text-base font-light text-[var(--spatialx-text-muted)]">
                     Loading…
                 </p>
             </div>
         );
     }
 
-    return (
-        <div className="flex min-h-full flex-1 flex-col items-center justify-center bg-zinc-50 px-4 py-16 dark:bg-zinc-950">
-            <div className="w-full max-w-lg rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
-                <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
-                    Welcome to the dashboard
-                </h1>
-                {session?.user ? (
-                    <p className="mt-3 text-sm text-zinc-600 dark:text-zinc-400">
-                        {session.user.name
-                            ? `Signed in as ${session.user.name}`
-                            : "You are signed in."}
-                        {session.user.email ? (
-                            <span className="block text-zinc-500 dark:text-zinc-500">
-                                {session.user.email}
-                            </span>
-                        ) : null}
-                    </p>
-                ) : null}
+    const name = session?.user?.name?.trim();
+    const email = session?.user?.email;
 
-                <button
-                    type="button"
-                    onClick={() =>
-                        signOut({ callbackUrl: "/", redirect: true })
-                    }
-                    className="mt-8 flex h-11 w-full items-center justify-center rounded-lg border border-zinc-300 bg-white text-sm font-medium text-zinc-900 transition hover:bg-zinc-50 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700 sm:w-auto sm:px-8"
+    return (
+        <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-16 sm:px-6 sm:py-20">
+            <p className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--spatialx-text-muted)]">
+                Dashboard
+            </p>
+            <h1 className="font-display mt-3 text-4xl font-normal tracking-tight text-[var(--spatialx-text)] sm:text-5xl">
+                {name ? `Welcome back, ${name}` : "Welcome back"}
+            </h1>
+            {email ? (
+                <p className="mt-2 text-base font-light text-[var(--spatialx-text-muted)]">
+                    {email}
+                </p>
+            ) : null}
+            <p className="mt-6 max-w-2xl text-lg font-light leading-relaxed text-[var(--spatialx-text-muted)]">
+                Open the map to explore the satellite basemap. This overview
+                will grow with projects and analysis.
+            </p>
+
+            <div className="mt-10">
+                <Link
+                    href="/dashboard/map"
+                    className="inline-flex h-[3.25rem] min-h-[3.25rem] items-center justify-center rounded-[100px] bg-zinc-900 px-8 text-base font-medium text-white transition hover:bg-zinc-800"
                 >
-                    Sign out
-                </button>
+                    Open map
+                </Link>
             </div>
-        </div>
+
+            <ul className="mt-14 grid gap-[0.5px] overflow-hidden rounded-[12px] bg-[var(--spatialx-border)] sm:grid-cols-2 lg:grid-cols-3">
+                {placeholders.map((item) => (
+                    <li
+                        key={item.title}
+                        className="bg-[var(--spatialx-bg)] p-6 sm:p-8"
+                    >
+                        <h2 className="text-base font-medium text-[var(--spatialx-text)]">
+                            {item.title}
+                        </h2>
+                        <p className="mt-2 text-[0.9375rem] font-light leading-relaxed text-[var(--spatialx-text-muted)] sm:text-base">
+                            {item.body}
+                        </p>
+                    </li>
+                ))}
+            </ul>
+
+            <p className="mt-12 text-base font-light text-[var(--spatialx-text-muted)]">
+                <Link
+                    href="/"
+                    className="font-medium text-[var(--spatialx-green)] underline-offset-4 hover:underline"
+                >
+                    ← Back to home
+                </Link>
+            </p>
+        </main>
     );
 }

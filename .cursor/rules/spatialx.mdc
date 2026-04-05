@@ -23,3 +23,7 @@ This is **Next.js 16** with breaking differences from older docs. Before writing
 - **Scope:** Match nearby files’ naming and style; avoid unrelated refactors.
 
 After touching routes, imports, or types, run **`npm run lint`** and **`npm run build`** when practical.
+
+## Keeping knowledge up to date
+
+After every **critical** edit (new conventions, stack or API changes, important architectural decisions, or anything that would mislead a future session if left undocumented), update **`AGENTS.md`** at the repo root and, when the change affects standing Cursor guidance, **this file** (`.cursor/rules/spatialx.mdc`) so project knowledge stays accurate.
