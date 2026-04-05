@@ -29,7 +29,7 @@ export async function POST(request: Request) {
             return NextResponse.json(
                 {
                     success: false,
-                    message: "No account found for this email.",
+                    message: "No account found for this email. please sign up first.",
                     errorCode: "NOT_FOUND" as const,
                 },
                 { status: 404 },
