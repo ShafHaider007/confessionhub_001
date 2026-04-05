@@ -4,6 +4,11 @@ import bcrypt from "bcryptjs";
 import { randomBytes } from "crypto";
 import { NextResponse } from "next/server";
 
+import { VERIFICATION_CODE_TTL_MS } from "@/lib/auth/verificationConstants";
+import {
+    assertCanSendVerificationEmail,
+    nextVerificationEmailTracking,
+} from "@/lib/auth/verificationEmailPolicy";
 import { sendVerificationEmail } from "@/lib/helpers/sendVerificationEmail";
 import { signUpSchema } from "@/schemas/signUpSchema";
 
@@ -23,7 +28,7 @@ export async function POST(request: Request){
         const { username, password, email } = parsed.data;
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
+        const expiresAt = new Date(Date.now() + VERIFICATION_CODE_TTL_MS);
         const verifyCode = randomBytes(32).toString("hex");
 
         const existingUserByEmail = await UserModel.findOne({ email });
@@ -36,18 +41,50 @@ export async function POST(request: Request){
                 );
             }
 
+            const gate = assertCanSendVerificationEmail(existingUserByEmail);
+            if (!gate.ok) {
+                return NextResponse.json(
+                    {
+                        success: false,
+                        message: gate.message,
+                        errorCode: "RATE_LIMIT" as const,
+                    },
+                    { status: gate.status },
+                );
+            }
+
+            const track = nextVerificationEmailTracking(existingUserByEmail);
+
             existingUserByEmail.username = username;
             existingUserByEmail.password = hashedPassword;
             existingUserByEmail.verifyCode = verifyCode;
             existingUserByEmail.verifyCodeExpiresAt = expiresAt;
+            existingUserByEmail.lastVerificationEmailAt =
+                track.lastVerificationEmailAt;
+            existingUserByEmail.verificationEmailWindowStart =
+                track.verificationEmailWindowStart;
+            existingUserByEmail.verificationEmailWindowCount =
+                track.verificationEmailWindowCount;
             await existingUserByEmail.save();
 
-            await sendVerificationEmail(email, username, verifyCode);
+            const emailResult = await sendVerificationEmail(
+                email,
+                username,
+                verifyCode,
+            );
+            if (!emailResult.success) {
+                return NextResponse.json(
+                    { success: false, message: emailResult.message },
+                    { status: 502 },
+                );
+            }
             return NextResponse.json(
                 { success: true, message: "Verification details updated; check your email" },
                 { status: 200 },
             );
         }
+
+        const trackNew = nextVerificationEmailTracking({});
 
         const newUser = new UserModel({
             username,
@@ -55,11 +92,27 @@ export async function POST(request: Request){
             email,
             verifyCode,
             verifyCodeExpiresAt: expiresAt,
+            lastVerificationEmailAt: trackNew.lastVerificationEmailAt,
+            verificationEmailWindowStart: trackNew.verificationEmailWindowStart,
+            verificationEmailWindowCount: trackNew.verificationEmailWindowCount,
         });
         await newUser.save();
 
-        await sendVerificationEmail(email, username, verifyCode);
-        return NextResponse.json({ success: true, message: "User created successfully" }, { status: 201 });
+        const emailResult = await sendVerificationEmail(
+            email,
+            username,
+            verifyCode,
+        );
+        if (!emailResult.success) {
+            return NextResponse.json(
+                { success: false, message: emailResult.message },
+                { status: 502 },
+            );
+        }
+        return NextResponse.json(
+            { success: true, message: "User created successfully" },
+            { status: 201 },
+        );
     }
     catch (error) {
         console.error(error);

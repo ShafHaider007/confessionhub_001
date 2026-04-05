@@ -1,17 +1,17 @@
-import { Html, Body, Container, Heading, Text, Button } from '@react-email/components';
-
+import { Html, Body, Container, Heading, Text } from "@react-email/components";
 
 interface VerificationEmailProps {
   code: string;
   username: string;
 }
+
 export function VerificationEmail({ code, username }: VerificationEmailProps) {
   return (
-    // here user get verification code to verify their email address
     <Html>
       <Body>
         <Container>
-          <Heading>Verification Email</Heading>
+          <Heading>Verify your email</Heading>
+          <Text>Hello {username},</Text>
           <Text>Your verification code is: {code}</Text>
           <Text>This code will expire in 10 minutes.</Text>
           <Text>If you did not request this verification, please ignore this email.</Text>

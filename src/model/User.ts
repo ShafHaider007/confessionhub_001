@@ -21,6 +21,12 @@ export interface User extends Document {
     verifyCode: string;
     verifyCodeExpiresAt: Date;
     isVerified: boolean;
+    /** Rate-limit: last time a verification email was sent. */
+    lastVerificationEmailAt?: Date | null;
+    /** Start of rolling 24h window for email send count. */
+    verificationEmailWindowStart?: Date | null;
+    /** Sends in the current 24h window (max 5). */
+    verificationEmailWindowCount?: number;
     isAcceptingMessages: boolean;
     messages: Message[];
 
@@ -35,6 +41,9 @@ const userSchema: Schema<User> = new Schema({
     verifyCodeExpiresAt: { type: Date, required: [true, "Verify code expiry at is required"] },
     verifyCode: { type: String, required: [true, "Verify code is required"] },
     isVerified: { type: Boolean, default: false },
+    lastVerificationEmailAt: { type: Date, default: null },
+    verificationEmailWindowStart: { type: Date, default: null },
+    verificationEmailWindowCount: { type: Number, default: 0 },
     isAcceptingMessages: { type: Boolean, default: true },
     messages: { type: [messageSchema], default: [] },
 

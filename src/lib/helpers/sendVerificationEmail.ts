@@ -1,36 +1,61 @@
+import { VerificationEmail } from "../../../emails/verificationEmail";
+import { ApiResponse } from "../../types/ApiResponse";
 import { resend } from "../resend";
 
-import { VerificationEmail } from "../../../emails/verificationEmail";
-
-import { ApiResponse } from "../../types/ApiResponse";
-
-
-
+/**
+ * Env:
+ * - RESEND_API_KEY (required)
+ * - RESEND_FROM (optional) — e.g. `ConfessionHub <onboarding@resend.dev>` or `Name <noreply@your-verified-domain.com>`
+ *
+ * Without a verified domain, use Resend’s test sender: onboarding@resend.dev (see RESEND_FROM default below).
+ */
 export async function sendVerificationEmail(
-     email: string,
-     username: string,
-     verifyCode: string,
-): Promise<ApiResponse>{
-    try{
+    email: string,
+    username: string,
+    verifyCode: string,
+): Promise<ApiResponse> {
+    if (!process.env.RESEND_API_KEY?.trim()) {
+        console.error("[sendVerificationEmail] Missing RESEND_API_KEY");
+        return {
+            success: false,
+            message: "Email is not configured. Add RESEND_API_KEY to your environment.",
+        };
+    }
 
-        await resend.emails.send({
-            from: 'Acme <shafhaider001@gmail.com>',
+    const from =
+        process.env.RESEND_FROM?.trim() ||
+        "ConfessionHub <onboarding@resend.dev>";
+
+    try {
+        const { data, error } = await resend.emails.send({
+            from,
             to: email,
-            subject: 'Verification Code for ConfessionHub',
-            html: `<p>Hello ${username},</p>
-            <p>Your verification code is: ${verifyCode}</p>
-            <p>This code will expire in 10 minutes.</p>
-            <p>If you did not request this verification, please ignore this email.</p>
-            <p>Thank you for using our service.</p>
-            <p>Best regards, Shaf Haider</p>`,
-            react: VerificationEmail({ code: verifyCode , username: username }),
-          });
+            subject: "Verification code — ConfessionHub",
+            react: VerificationEmail({ code: verifyCode, username }),
+        });
+
+        if (error) {
+            console.error("[sendVerificationEmail] Resend API error:", error);
+            return {
+                success: false,
+                message:
+                    error.message ||
+                    "Could not send verification email. Check RESEND_FROM and your Resend dashboard.",
+            };
+        }
+
+        if (!data) {
+            return {
+                success: false,
+                message: "Could not send verification email.",
+            };
+        }
+
         return {
             success: true,
             message: "Verification email sent successfully",
-        }; 
-    }
-    catch (error) {
+        };
+    } catch (error) {
         console.error(error);
         return {
             success: false,

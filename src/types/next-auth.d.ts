@@ -23,5 +23,9 @@ declare module "next-auth/jwt" {
         username?: string;
         isVerified?: boolean;
         isAcceptingMessages?: boolean;
+        /** Last time token was synced with MongoDB (ms). */
+        sessionRefreshedAt?: number;
+        /** User row deleted or revoked; middleware should deny access. */
+        invalid?: boolean;
     }
 }
